@@ -1,0 +1,149 @@
+<?php
+
+/* MAIN WEBSITE CONFIGURATION. */
+$__instance = array(
+		'protocol' => 'http://', // "http://" or "https://"
+		'prefix' => 'sjs-jhonnybail.c9users.io', // main url of the app "domainname.com", without "http://" or "www"
+		'db_host' => '127.0.0.1',	//change localhost only if you connect to a remote database server
+		'db_port' => '3306',
+		'db_user' => 'jhonnybail',
+		'db_password' => '',
+		'db_name' => 'c9',
+		'db_prefix' => '',
+		// language to use
+		'lang_code' => 'es',
+		'plugins' => array(), // list your plugins HERE, separated by comma ['plugin A', 'plugin B']
+		'ini_error_reporting' => 0, /*1*/
+		'ini_display_errors' => 'Off', /*On*/
+		'location' => 'local', // change to "local" for development
+		'environment' => 'dev', //change to "dev" for development
+		'rewrite_mode' => 'apache_mod_rewrite' //works for nginx too
+	);
+
+/* DEFAULT TEMPLATE FOR INSTALLER. WHEN CHANGING SERVER YOU CAN SET IT BACK TO DEFAULT. JUST FIRST CLOSE THE BRACKETS
+	'prefix' => '{DB_URL', // main url of the app "domainname.com", without "http://" or "www"
+	'db_host' => '{DB_HOST',	//change localhost only if you connect to a remote database server
+	'db_port' => '{DB_PORT',
+	'db_user' => '{DB_USER',
+	'db_password' => '{DB_PASSWORD',
+	'db_name' => '{DB_NAME',
+*/
+/* ############################*/
+
+/* ########################### CONSTANTS - DATABASE CONNECTIONS. PHP ENVIRONMENT AND URLS ################################## */
+
+/* in case user puts slash at the end skip it */
+if (substr($__instance['prefix'], -1) !== "/") 
+	$append = "/";
+else 
+	$append = "";
+
+/* in case there is no protocol set default */
+if (strlen($__instance['protocol']) < 5)
+	$__instance['protocol'] = "http://";
+
+/* in case of www */
+if (strpos($__instance['prefix'], "www.") !== false)
+	$__instance['prefix'] = substr($__instance['prefix'], 4, strlen($__instance['prefix']));
+
+
+// sw version
+define('SIMPLEJOBSCRIPT_VERSION', '1.4');
+define('SIMPLEJOBSCRIPT_PRODUCT', 'free');
+
+define('PROTOCOL', $__instance['protocol']);
+define('DB_HOST', $__instance['db_host']);
+define('DB_PORT', $__instance['db_port']);
+define('DB_USER', $__instance['db_user']);
+define('DB_PASS', $__instance['db_password']);
+define('DB_NAME', $__instance['db_name']);
+define('DB_PREFIX', $__instance['db_prefix']);
+
+// values kind of redundant, they indicate wether this is a live/production or dev/testing environment
+define('LOCATION', $__instance['location']);
+define('ENVIRONMENT', $__instance['environment']);
+
+// error reporting
+ini_set('error_reporting', $__instance['ini_error_reporting']);
+ini_set('display_errors', $__instance['ini_display_errors']);
+
+// constants part 1
+define('CONTROLLERS_PATH', 'controllers');
+define('DESCRIPTION_LIMIT', 180); //used in emails
+define('REWRITE_MODE', $__instance['rewrite_mode']);
+define('LANG_CODE', $__instance['lang_code']);
+define('DEFAULT_PROFILE_PATH', 'uploads/companies/profile-picture-default.png');
+
+define('FILE_UPLOAD_DIR', 'uploads/cvs/');
+define('COMPANIES_UPLOAD_FOLDER', 'uploads/companies/');
+define('BANNERS_UPLOAD_FOLDER', 'uploads/ads/');
+
+
+$plugins = array();
+$plugins =  $__instance['plugins'];
+
+/* =========== WEBSITE ROUTING SETTINGS ======== */
+// CRONJOB 
+// 1. BASE_URL ("http://website.com") - used in templates and classes
+// 2. PROTOCOL_URL ("http://website.com") - used in newsletter
+// 3. MAIN_URL - for background emails
+/*#######################################*/
+// ADMIN
+// 1. BASE_URL_ORIG ("website.com/") - used in links to frontend
+// 2. BASE_URL ("website.com/sjs-admin/") - admin routing
+/*#######################################*/
+// MAIN APPLICATION
+// 1. BASE_URL ("/") - used with assets, in templates
+// 2. MAIN_URL ("website.com/") - used in emails, links to web
+/*#######################################*/
+
+$DIR_CONST = '';
+if (defined('__DIR__'))
+	$DIR_CONST = __DIR__;
+else
+	$DIR_CONST = dirname(__FILE__);
+
+define('PATH_PREFIX', $DIR_CONST . '/../'); //used when sending cv attachments
+
+/* cron settings */
+if (defined('CRON_JOB')) {
+	/* CRON JOB URLs  - they need to be 2 of them because of templates they contain BASE_URL all over .. */
+	define('PROTOCOL_URL', $__instance['protocol'] . $__instance['prefix'] . $append);
+	define('BASE_URL', PROTOCOL_URL); // outlook and some browsers do not render links properly without http(s)://
+	define('MAIN_URL', PROTOCOL_URL);
+	return;
+} else {
+	/* NORMAL APPLICATION URLs */
+	//switch main application and admin url
+	if (strpos($_SERVER['REQUEST_URI'], "sjs-admin") === false) {
+		define('BASE_URL', '/'); // regular application route
+	}
+	else {
+		// THIS IS JUST FOR ADMIN SECTION
+		define('BASE_URL_ORIG', '/'); // used in 2 functions
+		define('BASE_URL', '/sjs-admin/'); //need to change main route in admin
+	}
+	define('MAIN_URL', $__instance['prefix'] . $append); // no need to set this. Its full domain. Used in emails etc.
+}
+
+// few more constants part 2
+define('RELATED_JOBS_PER_PAGE', 5);
+
+define('BANNER_LISTING', 1);
+define('BANNER_DETAIL', 2);
+define('BANNER_BACKOFFICE', 3);
+define('BANNER_LEADERBOARD', 4);
+define('BANNER_JOBLISTING', 5);
+define('BANNER_CANDIDATE_BACKOFFICE', 6);
+
+define('SEARCH_METHOD', 'classic'); 
+define('CSV_UPLOAD_DIR', 'uploads/csv/');
+
+//installation required
+if( strpos($__instance['db_host'], "DB_HOST") ==! false)
+{
+	require_once('installer.php');
+	exit;
+}
+
+?>
