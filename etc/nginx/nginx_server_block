@@ -1,0 +1,74 @@
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    #set your path
+    root /var/www/yourproject/public;
+    index index.php index.html index.htm;
+
+    server_name yourproject.com; # virtual host name
+
+    # rewrite access for admin ad blog section
+    location / {
+
+        if ($request_filename ~ /sjs-admin/) {
+           rewrite ^/sjs-admin/(.+)$ /sjs-admin/index.php?url=$1 last;
+        }
+
+        if ($request_filename ~ /blog/) {
+           # custom blog rewrite rules for friendly urls
+           rewrite ^/blog/category/([^/]+)page-([0-9+])$ /blog/index.php?controller=blog&action=view&category=$1&number=$2 last;
+           rewrite ^/blog/category/([^/]+)/$ /blog/index.php?controller=blog&action=view&category=$1&number=0 last;
+           rewrite ^/blog/tag/([^/]+)/page-([0-9]+)$ /blog/index.php?controller=blog&action=view&tag=$1&number=$2 last;
+           rewrite ^/blog/tag/([^/]+)/$ /blog/index.php?controller=blog&action=view&tag=$1&number=0 last;
+           rewrite ^/blog/page-([0-9]+)$ /blog/index.php?controller=blog&action=view&number=$1 last;
+           rewrite ^/blog/post/([^/]+)/$ /blog/index.php?controller=post&action=view&post=$1 last;
+           rewrite ^/blog/post-([0-9]+)/(.*)$ /blog/index.php?controller=post&action=view&id_post=$1 last;
+           rewrite ^/blog/page/([^/]+)/$ /blog/index.php?controller=page&action=view&page=$1 last;
+           rewrite ^/blog/feed/$ /blog/feed.php last;
+           rewrite ^/blog/([^/]+)/$ /blog/index.php?controller=page&action=$1 last;
+        }
+
+        try_files $uri $uri/ /index.php$is_args$args;
+     
+    }
+
+    # access log turned off for speed
+    access_log off; #enable if you need it
+    error_log /var/log/nginx/error.log; #or path to your error log
+
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /50x.html;
+
+    # basic caching for static resources
+    location ~* \.(ico|css|js|gif|jpg|jpeg|png|xml)$ {
+          #Some basic cache-control for static files to be sent to the browser
+          expires 30d;
+          access_log        off;
+          log_not_found     off;
+          add_header Pragma public;
+          add_header Cache-Control "public";
+    }
+
+    location = /50x.html {
+       root /usr/share/nginx/html;
+    }
+
+    #configure php
+    location ~ \.php$ {
+       try_files $uri =404;
+       fastcgi_split_path_info ^(.+\.php)(/.+)$;
+       fastcgi_pass unix:/var/run/php5-fpm.sock;
+       fastcgi_index index.php;
+       fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+       fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+       fastcgi_buffer_size 128k;
+       fastcgi_buffers 256 16k;
+       fastcgi_busy_buffers_size 256k;
+       fastcgi_temp_file_write_size 256k;
+       include fastcgi_params;
+    }
+
+}
+

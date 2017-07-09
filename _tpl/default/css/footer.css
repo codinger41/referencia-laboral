@@ -1,0 +1,108 @@
+.reload-spinner {
+	width: 35px;
+}
+.feedback-newsletter {
+	color: #808080;
+	font-size: 13px;
+	opacity: 0.8;
+}
+
+.envelope {
+	width: 40px;
+}
+
+.job-alert {
+	text-align: center;
+	padding: 15px 0px 15px 0px;
+	margin-top: 20px;
+}
+
+.job-alert input {
+	margin-bottom: 15px;
+	margin: 5px auto;
+}
+
+.newsletter-title {
+	color: #808080;
+	text-transform: uppercase;
+	font-size: 14px;
+	padding: 10px 10px 10px 10px;
+}
+
+.footer-newsletter .form-group input{
+	margin: 0 auto;
+}
+.footer-newsletter button {
+	text-transform: uppercase;
+}
+
+.footer-newsletter {
+	padding: 10px 0px 10px 0px;
+	text-align: center;
+}
+
+.footer-newsletter .form-group input {
+	margin-bottom: 5px !important;
+}
+
+
+.footer-roof {
+	width: 100%;
+	font-size: 16px;
+	margin-top: 50px;
+	padding-bottom: 15px;
+	text-align: center;
+	color: #2f4154;
+}
+
+.footer-social, .footer-copyright {
+	text-align: center;
+	color: #fff;
+	opacity: 0.95;
+}
+
+#library-loads {
+	color: #fff !important;
+	text-align: center;
+	font-size: 14px;
+	opacity: 0.5;
+}  
+
+#library-loads a {
+	color: #fff !important;
+}
+
+.footer-social {
+	margin-bottom: 15px;
+}
+
+.footer-tail {
+	background-color: #292c2f;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+	box-sizing: border-box;
+	width: 100%;
+	padding: 25px 50px;
+}
+
+.social-icon {
+	width: 30px;
+	margin-right: 5px;
+}
+
+.company-box .social-icon {
+	width: 40px;
+}
+
+/* If you don't want the footer to be responsive, remove these media queries */
+
+@media (max-width: 880px) {
+	.footer-newsletter .form-group {
+		width: 85%;
+		margin: 0 auto;
+	}
+}
+@media (max-width: 1000px) {
+	.newsletter-response-holder {
+		padding-top: 10px;
+	}
+}
