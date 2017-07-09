@@ -5,3 +5,6 @@
 /_config/config.envs.php
 /_tools/maintenance.log
 php.ini
+Vagrantfile
+.vagrant
+.idea
